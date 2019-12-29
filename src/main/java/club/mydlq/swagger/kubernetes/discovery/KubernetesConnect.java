@@ -37,15 +37,15 @@ public class KubernetesConnect {
         String formConfigPath = kubernetesAutoConfig.getFromConfigPath();
         boolean isFromCluster = kubernetesAutoConfig.isFromCluster();
         boolean isFromDefault = kubernetesAutoConfig.isFromDefault();
-        boolean isValidateSSL = kubernetesAutoConfig.isValidateSsl();
+        boolean isValidateSsl = kubernetesAutoConfig.isValidateSsl();
         // form token
         if (StringUtils.isNotEmpty(tokenPath) && StringUtils.isNotEmpty(url)) {
             log.info("from token file connection kubernetes");
             token = FileUtils.readFile(tokenPath);
-            connectFromToken(url, token, isValidateSSL, caPath);
+            connectFromToken(url, token, isValidateSsl, caPath);
         } else if (StringUtils.isNotEmpty(token) && StringUtils.isNotEmpty(url)) {
             log.info("from token connection kubernetes");
-            connectFromToken(url, token, isValidateSSL, caPath);
+            connectFromToken(url, token, isValidateSsl, caPath);
         }
         // form cluster
         else if (isFromCluster) {
@@ -80,7 +80,7 @@ public class KubernetesConnect {
      * 从指定文件读取配置文件连接 Kubernetes 集群
      * Reads a configuration file from the specified file to connect to the Kubernetes cluster
      *
-     * @param configPath
+     * @param configPath 配置文件地址
      */
     private void connectFromConfig(String configPath) {
         ApiClient apiClient = null;
@@ -96,15 +96,15 @@ public class KubernetesConnect {
      * 通过 Token 连接 Kubernetes 集群
      * Connect to the Kubernetes cluster over Token
      *
-     * @param url
-     * @param token
-     * @param validateSSL
-     * @param caPath
+     * @param url         Kubernetes URL
+     * @param token       Token File
+     * @param validateSsl Verify the SSL
+     * @param caPath      CA certificate path
      */
-    private void connectFromToken(String url, String token, boolean validateSSL, String caPath) {
-        ApiClient apiClient = Config.fromToken(url, token, validateSSL);
+    private void connectFromToken(String url, String token, boolean validateSsl, String caPath) {
+        ApiClient apiClient = Config.fromToken(url, token, validateSsl);
         // validateSSL
-        if (validateSSL) {
+        if (validateSsl) {
             try {
                 apiClient.setSslCaCert(new FileInputStream(caPath));
             } catch (FileNotFoundException e) {

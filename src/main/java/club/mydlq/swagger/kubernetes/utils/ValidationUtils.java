@@ -5,6 +5,9 @@ import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Pattern;
 
+/**
+ * 效验工具
+ */
 public class ValidationUtils {
 
     private ValidationUtils() {
@@ -30,7 +33,7 @@ public class ValidationUtils {
      */
     public static boolean isSwagger(String jsonStr) {
         try {
-            JsonElement jsonElement = new JsonParser().parse(jsonStr);
+            JsonElement jsonElement = JsonParser.parseString(jsonStr);
             String swaggerStr = jsonElement.getAsJsonObject().get("swagger").toString();
             return StringUtils.isNotEmpty(swaggerStr);
         } catch (Exception e) {

@@ -5,6 +5,9 @@ import org.springframework.cloud.netflix.zuul.RoutesRefreshedEvent;
 import org.springframework.cloud.netflix.zuul.filters.RouteLocator;
 import org.springframework.context.ApplicationEventPublisher;
 
+/**
+ * 动态刷新路由
+ */
 public class RefreshRoute {
 
     @Autowired

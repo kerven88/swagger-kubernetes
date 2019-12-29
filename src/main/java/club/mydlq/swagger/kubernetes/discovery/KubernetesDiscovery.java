@@ -22,6 +22,7 @@ import org.springframework.scheduling.config.IntervalTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -120,8 +121,9 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
 
     /**
      * 分析静态服务
-     * @param route
-     * @return
+     *
+     * @param route Zuul路由对象
+     * @return ServiceInfo
      */
     private ServiceInfo analysisStaticService(ZuulRoute route) {
         boolean isVerify = true;
@@ -131,7 +133,7 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
             isVerify = false;
         }
         // 如果不是以 http 或者 https 开始,则默认加上 "http://"
-        if (!(route.getUrl().startsWith("http") || route.getUrl().startsWith("https"))) {
+        if (!("http".startsWith(Objects.requireNonNull(route.getUrl())) || route.getUrl().startsWith("https"))) {
             route.setUrl("http://" + route.getUrl());
         }
         // 如果为域名,则默认加上 "80" 端口
@@ -188,11 +190,11 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
     /**
      * 获取 ServiceInfo 列表
      *
-     * @param namespace
-     * @param host
+     * @param namespace  Kubernetes Namespace
+     * @param host       Host Address
      * @param portType   ClusterIP Or NodePort
-     * @param swaggerUrl
-     * @return
+     * @param swaggerUrl Swagger URL
+     * @return ServiceInfo List
      */
     private static List<ServiceInfo> getServiceInfo(String namespace, String portType, String host, String swaggerUrl) {
         if (StringUtils.isEmpty(namespace)) {
@@ -214,9 +216,6 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
             }
             // 获取端口列表
             Integer[] ports = getPort(service, portType);
-            if (ports == null) {
-                continue;
-            }
             // 根据 Port & swaggerUrl 检查地址是否是 Swagger Api 来确定是否加入服务列表
             for (Integer port : ports) {
                 log.debug(serviceHost + ":" + port + swaggerUrl);
@@ -240,7 +239,7 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
      *
      * @param service kubernetes service info
      * @param type    ClusterIP or NodePort
-     * @return
+     * @return port Array
      */
     private static Integer[] getPort(V1Service service, String type) {
         List<Integer> ports = new ArrayList<>();
@@ -261,9 +260,9 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
     /**
      * 从 Kubernetes 中获取 Service 列表
      *
-     * @param namespace
-     * @param portType
-     * @return
+     * @param namespace Kubernetes Namespace
+     * @param portType  Port Type
+     * @return Service List
      */
     private static List<V1Service> getKubernetesServiceList(String namespace, String portType) {
         // 设置 Api 客户端
@@ -273,8 +272,8 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
         V1EndpointsList endPointList = null;
         // 获取 ServiceList & EndPointList
         try {
-            serviceList = api.listNamespacedService(namespace, null, null, null, null, null, null, null, null, null);
-            endPointList = api.listNamespacedEndpoints(namespace, null, null, null, null, null, null, null, null, null);
+            serviceList = api.listNamespacedService(namespace, null, null, null, null, null, null, null, null);
+            endPointList = api.listNamespacedEndpoints(namespace, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
             log.error(e.getMessage());
         }
@@ -296,9 +295,9 @@ public class KubernetesDiscovery implements SchedulingConfigurer {
     /**
      * 检测 Service 中是否包含 Endpoints
      *
-     * @param endpointList
-     * @param serviceName
-     * @return
+     * @param endpointList EndPoint List
+     * @param serviceName  Kubernetes Service Name
+     * @return is contain endpoints
      */
     private static boolean isContainEndpoints(V1EndpointsList endpointList, String serviceName) {
         if (endpointList.getItems() != null) {

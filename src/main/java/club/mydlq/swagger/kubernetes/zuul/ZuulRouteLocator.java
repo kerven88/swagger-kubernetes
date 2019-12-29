@@ -31,7 +31,7 @@ public class ZuulRouteLocator extends SimpleRouteLocator implements RefreshableR
      * 更新服务列表
      * Update service list
      *
-     * @param serviceInfos
+     * @param serviceInfos Service Info
      */
     public void setServiceInfos(List<ServiceInfo> serviceInfos) {
         this.serviceInfos = serviceInfos;
@@ -41,7 +41,7 @@ public class ZuulRouteLocator extends SimpleRouteLocator implements RefreshableR
      * 加载 Kubernetes 服务列表
      * Load the Kubernetes service list
      *
-     * @return
+     * @return ZuulRoute Map
      */
     private Map<String, ZuulProperties.ZuulRoute> locateRoutesFromKubernetes() {
         Map<String, ZuulRoute> routes = new LinkedHashMap<>();
@@ -64,13 +64,12 @@ public class ZuulRouteLocator extends SimpleRouteLocator implements RefreshableR
      * 重写 Zuul 路由策略
      * Rewrite Zuul routing policy
      *
-     * @return
+     * @return ZuulRoute LinkedHashMap
      */
     @Override
     protected LinkedHashMap<String, ZuulRoute> locateRoutes() {
-        LinkedHashMap<String, ZuulRoute> routesMap = new LinkedHashMap<>();
-        /** ----------------------Loads custom routing information---------------------- **/
-        routesMap.putAll(locateRoutesFromKubernetes());
+        /* ----------------------Loads custom routing information---------------------- */
+        LinkedHashMap<String, ZuulRoute> routesMap = new LinkedHashMap<>(locateRoutesFromKubernetes());
         LinkedHashMap<String, ZuulRoute> values = new LinkedHashMap<>();
         for (Map.Entry<String, ZuulRoute> entry : routesMap.entrySet()) {
             String path = entry.getKey();

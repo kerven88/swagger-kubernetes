@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.2.2.RELEASE</version>
         <relativePath/>
     </parent>
 
     <groupId>club.mydlq</groupId>
     <artifactId>swagger-kubernetes</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>swagger-kubernetes</name>
@@ -44,11 +44,10 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <version.knife4j>2.0.1</version.knife4j>
         <version.swagger>2.9.2</version.swagger>
         <version.zuul>2.1.1.RELEASE</version.zuul>
-        <version.kubernetes>4.0.0</version.kubernetes>
-        <version.springboot>2.1.5.RELEASE</version.springboot>
-        <version.swagger-bootstrap-ui>1.9.3</version.swagger-bootstrap-ui>
+        <version.kubernetes>6.0.1</version.kubernetes>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -97,19 +96,9 @@
             <version>${version.swagger}</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${version.swagger}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-bean-validators</artifactId>
-            <version>${version.swagger}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>${version.swagger-bootstrap-ui}</version>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>${version.knife4j}</version>
         </dependency>
     </dependencies>
 

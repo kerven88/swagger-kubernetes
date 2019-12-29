@@ -6,9 +6,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,24 +23,26 @@ public class HttpUtils {
     private HttpUtils() {
     }
 
-    // Timeout Setting
-    private static final int TIMEOUT_CONNECT = 200;
-    private static final int TIMEOUT_CONNECT_REQUEST = 200;
+    /**
+     * Timeout Setting
+     */
+    private static final int TIMEOUT_CONNECT = 100;
+    private static final int TIMEOUT_CONNECT_REQUEST = 150;
     private static final int TIMEOUT_SOCKET = 200;
 
     /**
      * 验证 uri 是否为 Swagger Api URL
      * Verify that URI is Swagger Api URL
      *
-     * @param serviceInfos
+     * @param serviceInfos 服务信息
      */
     public static void checkUrl(List<ServiceInfo> serviceInfos) {
         List<ServiceInfo> newServiceInfos = new ArrayList<>();
         // HttpClient 客户端
-        CloseableHttpClient httpCilent = null;
-        HttpGet httpGet = null;
+        CloseableHttpClient httpCilent;
+        HttpGet httpGet;
         try {
-            httpCilent = HttpClients.createDefault();
+            httpCilent = HttpClientBuilder.create().build();
             // 过滤 URL
             for (ServiceInfo serviceInfo : serviceInfos) {
                 // get request
@@ -66,8 +67,8 @@ public class HttpUtils {
      * 执行 HTTP 请求，获取响应结果
      * Execute HTTP requests to obtain response results.
      *
-     * @param httpGet
-     * @return
+     * @param httpGet Http Get 请求
+     * @return 响应结果
      */
     private static String getHttpRequestResult(CloseableHttpClient httpClient, HttpGet httpGet) {
         String result = null;
@@ -86,16 +87,20 @@ public class HttpUtils {
      * 创建 HttpGet 请求对象
      * Create HttpGet request object.
      *
-     * @param uri
-     * @return
+     * @param uri 请求地址
+     * @return Http Get 请求对象
      */
     private static HttpGet createHttpGet(String uri) {
         // 设置 RequestConfig
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(TIMEOUT_CONNECT)                   //设置连接超时时间
-                .setConnectionRequestTimeout(TIMEOUT_CONNECT_REQUEST) //设置请求超时时间
-                .setSocketTimeout(TIMEOUT_SOCKET)                     //设置Socket超时时间
-                .setRedirectsEnabled(false)                           //默认允许自动重定向
+                //设置连接超时时间
+                .setConnectTimeout(TIMEOUT_CONNECT)
+                //设置请求超时时间
+                .setConnectionRequestTimeout(TIMEOUT_CONNECT_REQUEST)
+                //设置Socket超时时间
+                .setSocketTimeout(TIMEOUT_SOCKET)
+                //默认允许自动重定向
+                .setRedirectsEnabled(false)
                 .build();
         HttpGet httpGet = new HttpGet();
         httpGet.setURI(URI.create(uri));
