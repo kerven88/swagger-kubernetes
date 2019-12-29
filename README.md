@@ -1,5 +1,5 @@
-<!-- ![](http://ww1.sinaimg.cn/large/007vhU0ely1g47xglqna6j30qy09rtb5.jpg) -->
-![](https://mydlq-club.oss-cn-beijing.aliyuncs.com/images/swagger-kubernetes-1001.jpg)
+![](http://ww1.sinaimg.cn/large/007vhU0ely1g47xglqna6j30qy09rtb5.jpg)
+<!-- ![](https://mydlq-club.oss-cn-beijing.aliyuncs.com/images/swagger-kubernetes-1001.jpg) -->
 
 # Swagger Kubernetes
 
@@ -14,13 +14,13 @@ Swagger Kubernetes 是拥有在 Kubernetes 环境中服务发现功能，能够�
 - hub地址：https://hub.docker.com/r/mydlqclub/swagger-kubernetes
 - Docker镜像： mydlqclub/swagger-kubernetes
 
-<!-- ![](http://ww1.sinaimg.cn/large/007vhU0ely1g3qeczucrij30qe0k174p.jpg) -->
-![](https://mydlq-club.oss-cn-beijing.aliyuncs.com/images/swagger-kubernetes-1002.jpg)
+![](http://ww1.sinaimg.cn/large/007vhU0ely1g3qeczucrij30qe0k174p.jpg)
+<!-- ![](https://mydlq-club.oss-cn-beijing.aliyuncs.com/images/swagger-kubernetes-1002.jpg) -->
 
 ## 二、架构图
 
-<!-- ![](http://ww1.sinaimg.cn/large/007vhU0ely1g49t2mpc6tj30rs0bugmi.jpg) -->
-![](https://mydlq-club.oss-cn-beijing.aliyuncs.com/images/swagger-kubernetes-1003.jpg)
+![](http://ww1.sinaimg.cn/large/007vhU0ely1g49t2mpc6tj30rs0bugmi.jpg)
+<!-- ![](https://mydlq-club.oss-cn-beijing.aliyuncs.com/images/swagger-kubernetes-1003.jpg) -->
 
 ## 三、注意事项
 
@@ -88,10 +88,12 @@ metadata:
     app: swagger-kubernetes
 spec:
   ports:
-  - name: tcp
-    port: 8080
-    nodePort: 32255
-    targetPort: 8080
+    - name: server
+      port: 8080
+      targetPort: 8080
+    - name: management
+      port: 8081
+      targetPort: 8081
   type: NodePort
   selector:
     app: swagger-kubernetes
@@ -111,12 +113,36 @@ spec:
       labels:
         app: swagger-kubernetes
     spec:
-      serviceAccountName: swagger-kubernetes    #这里引用创建的服务账户，否则可能没有读取服务所在 Namespace 的权限
+      serviceAccountName: swagger-kubernetes
       containers:
-      - name: swagger-kubernetes
-        image: mydlqclub/swagger-kubernetes
-        ports:
-        - containerPort: 8080
+        - name: swagger-kubernetes
+          image: mydlqclub/swagger-kubernetes:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 2000m
+            requests:
+              memory: 256Mi
+              cpu: 500m
+          readinessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 5
+            httpGet:
+              path: /actuator/health
+              port: 8081
+          livenessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8081
 ```
 
 **创建 ServiceAccount**

@@ -34,7 +34,7 @@ spec:
       serviceAccountName: swagger-kubernetes
       containers:
         - name: swagger-kubernetes
-          image: mydlqclub/swagger-kubernetes
+          image: mydlqclub/swagger-kubernetes:1.0.0
           #image: rdc-hub.i139.cn/rdc-commons/swagger-kubernetes:1.1.0
           imagePullPolicy: IfNotPresent
           ports:
