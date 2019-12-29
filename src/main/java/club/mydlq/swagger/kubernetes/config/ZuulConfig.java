@@ -8,6 +8,9 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * 开启 Zuul 配置
+ */
 @EnableZuulProxy
 public class ZuulConfig {
 

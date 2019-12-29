@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SwaggerResources implements SwaggerResourcesProvider {
 
-    // serviceInfo list
+    /** serviceInfo list */
     List<ServiceInfo> serviceInfos = new ArrayList<>();
     private SwaggerAutoConfig swaggerAutoConfig;
 
